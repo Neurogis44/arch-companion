@@ -16,3 +16,9 @@ def show_menu(options: list[str]):
     print()
     print("0. Back")
     print()
+
+
+def ask_choice() -> str:
+    """Ask the user for a menu choice."""
+
+    return input("Your choice: ")

@@ -1,5 +1,5 @@
 from core.screen import clear
-from core.ui import show_title, show_menu
+from core.ui import show_title, show_menu, ask_choice
 
 
 class GamingModule:
@@ -23,7 +23,7 @@ class GamingModule:
             show_title("Gaming")
             show_menu(gaming_apps)
 
-            choice = input("Your choice: ")
+            choice = ask_choice()
 
             if choice == "0":
                 break
