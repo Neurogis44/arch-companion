@@ -30,9 +30,28 @@ def show_maintenance_module():
         print("\n🚀 Nettoyage du cache pacman (paccache -r)...")
         subprocess.run(["sudo", "paccache", "-r"], check=False)
     elif choice == "2":
-        print("\n🔍 Recherche et suppression des orphelins...")
-        cmd = "sudo pacman -Rns $(pacman -Qtdq)"
-        print(f"Commande : {cmd}")
-        subprocess.run(cmd, shell=True, check=False)
+        print("\n🔍 Recherche des paquets orphelins...")
+        try:
+            # On vérifie d'abord s'il y a des orphelins
+            result = subprocess.run(
+                ["pacman", "-Qtdq"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                check=False,
+            )
+            
+            orphans = result.stdout.strip().splitlines()
+
+            if not orphans or not result.stdout.strip():
+                print("\n🎉 Aucun paquet orphelin trouvé ! Ton système est parfaitement propre.")
+            else:
+                print(f"\n📦 {len(orphans)} paquet(s) orphelin(s) trouvé(s) : {', '.join(orphans)}")
+                cmd_str = f"sudo pacman -Rns {' '.join(orphans)}"
+                print(f"🚀 Exécution : {cmd_str}\n")
+                subprocess.run(["sudo", "pacman", "-Rns"] + orphans, check=False)
+
+        except Exception as e:
+            print(f"\n❌ Erreur lors de la recherche d'orphelins : {e}")
 
     input("\nAppuie sur Entrée pour revenir au menu principal...")
