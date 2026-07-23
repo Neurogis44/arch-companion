@@ -1,7 +1,12 @@
+from core.screen import clear
+from core.ui import show_title, show_menu
+
+
 class GamingModule:
+    """Gaming module."""
 
     def open(self):
-        """Display the Gaming menu."""
+        """Open the Gaming menu."""
 
         gaming_apps = [
             "Steam",
@@ -11,20 +16,18 @@ class GamingModule:
             "Gamescope",
         ]
 
-        print()
-        print("=" * 40)
-        print("               GAMING")
-        print("=" * 40)
-        print()
+        while True:
 
-        for number, app in enumerate(gaming_apps, start=1):
-            print(f"{number}. {app}")
+            clear()
 
-        print()
-        print("0. Back")
-        print()
+            show_title("Gaming")
+            show_menu(gaming_apps)
 
-        choice = input("Your choice: ")
+            choice = input("Your choice: ")
 
-        print()
-        print(f"You selected: {choice}")
+            if choice == "0":
+                break
+
+            print()
+            print(f"'{choice}' is not implemented yet.")
+            input("\nPress Enter to continue...")
