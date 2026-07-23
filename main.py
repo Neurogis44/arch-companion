@@ -1,13 +1,9 @@
-"""
-Arch Companion
-Main entry point
+from core.app import App
 
-Author: Denis (Neurogis44)
-License: MIT
-"""
 
 def main():
-    print("Welcome to Arch Companion!")
+    app = App()
+    app.run()
 
 
 if __name__ == "__main__":
