@@ -1,6 +1,6 @@
 import subprocess
+from services.system import is_package_installed
 
-# Paquets système essentiels
 SYSTEM_PACKAGES = [
     "reflector",
     "ufw",
@@ -9,32 +9,41 @@ SYSTEM_PACKAGES = [
 ]
 
 def show_system_utils_module():
-    """Affiche le module d'installation des utilitaires système."""
+    """Affiche le module Utilitaires Système avec diagnostic."""
     print("\n" + "=" * 50)
     print("      🛠️ PARCOURS UTILITAIRES SYSTÈME")
     print("=" * 50)
-    print("Ce module installe des outils fondamentaux pour maintenir,")
-    print("sécuriser et administrer ton système Arch Linux.\n")
+    print("Analyse de ton système en cours...\n")
 
     print("💡 RAPPELS ARCH WIKI :")
-    print("  • Reflector : Permet de trouver les miroirs pacman les plus rapides.")
-    print("  • UFW : Pare-feu simple à configurer (ex: sudo ufw enable).")
+    print("  • Reflector : Miroirs pacman ultra rapides.")
+    print("  • UFW : Pare-feu simple à activer (sudo ufw enable).")
     print("  • Micro : Éditeur de texte très intuitif dans le terminal.")
-    print("📖 Arch Wiki Maintenance : https://wiki.archlinux.org/title/System_maintenance\n")
+    print("📖 Arch Wiki : https://wiki.archlinux.org/title/System_maintenance\n")
 
-    print("📦 Paquets concernés :")
+    missing_packages = []
+    print("📦 État des paquets sur ta machine :")
     for pkg in SYSTEM_PACKAGES:
-        print(f"  • {pkg}")
+        if is_package_installed(pkg):
+            print(f"  [✓] {pkg} (Déjà installé)")
+        else:
+            print(f"  [ ] {pkg} (Manquant)")
+            missing_packages.append(pkg)
 
-    print("\n💻 Commande qui sera exécutée :")
-    cmd_str = f"sudo pacman -S --needed {' '.join(SYSTEM_PACKAGES)}"
+    if not missing_packages:
+        print("\n🎉 Tous les utilitaires système essentiels sont déjà installés !")
+        input("\nAppuie sur Entrée pour revenir au menu principal...")
+        return
+
+    print(f"\n💻 Commande qui sera exécutée ({len(missing_packages)} paquet(s) à installer) :")
+    cmd_str = f"sudo pacman -S --needed {' '.join(missing_packages)}"
     print(f"   {cmd_str}\n")
 
-    choice = input("👉 Veux-tu lancer l'installation ? (o/N) : ").strip().lower()
+    choice = input("👉 Veux-tu installer les paquets manquants ? (o/N) : ").strip().lower()
 
     if choice == "o":
         print("\n🚀 Lancement de pacman...\n")
-        subprocess.run(["sudo", "pacman", "-S", "--needed"] + SYSTEM_PACKAGES, check=False)
+        subprocess.run(["sudo", "pacman", "-S", "--needed"] + missing_packages, check=False)
     else:
         print("\n❌ Installation annulée.")
 

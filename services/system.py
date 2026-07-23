@@ -87,3 +87,29 @@ def get_installed_packages_count() -> str:
         except Exception:
             pass
     return "Indisponible"
+
+def is_package_installed(package_name: str) -> bool:
+    """Vérifie si un paquet précis est déjà installé sur le système."""
+    if shutil.which("pacman"):
+        try:
+            result = subprocess.run(
+                ["pacman", "-Q", package_name],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                check=False,
+            )
+            return result.returncode == 0
+        except Exception:
+            pass
+    return False
+
+def get_gpu_vendor() -> str:
+    """Détecte la marque principale de la carte graphique (NVIDIA, AMD, INTEL)."""
+    gpu_info = get_gpu_info().upper()
+    if "NVIDIA" in gpu_info:
+        return "NVIDIA"
+    elif "AMD" in gpu_info or "RADEON" in gpu_info or "ADVANCED MICRO DEVICES" in gpu_info:
+        return "AMD"
+    elif "INTEL" in gpu_info:
+        return "INTEL"
+    return "UNKNOWN"
