@@ -1,8 +1,9 @@
-from core.banner import Banner
+from core.banner import show
 from core.menu import Menu
 from core.navigation import Navigation
 from modules.gaming import GamingModule
 from core.screen import clear
+from config import APP_NAME
 
 
 class App:
@@ -11,7 +12,6 @@ class App:
     def __init__(self):
         """Initialize the application."""
 
-        self.banner = Banner()
         self.menu = Menu()
         self.navigation = Navigation()
         self.gaming = GamingModule()
@@ -25,15 +25,14 @@ class App:
         while True:
 
             clear()
-            
-            self.banner.show()
+            show()
             self.menu.show()
 
             choice = self.menu.get_choice()
 
             if choice == "0":
                 print()
-                print("Thanks for using Arch Companion!")
+                print(f"Thank you for using {APP_NAME}!")
                 break
 
             self.navigation.execute(choice)
