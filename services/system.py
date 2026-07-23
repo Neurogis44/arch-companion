@@ -28,11 +28,20 @@ def get_cpu_info() -> str:
         with open("/proc/cpuinfo", "r") as f:
             for line in f:
                 if "model name" in line:
-                    # Nettoie le nom du CPU pour l'affichage
                     return line.split(":")[1].strip()
     except Exception:
         pass
     return "Non détecté"
+
+
+def get_cpu_vendor() -> str:
+    """Détecte le constructeur du CPU (AMD ou INTEL)."""
+    cpu = get_cpu_info().upper()
+    if "AMD" in cpu:
+        return "AMD"
+    elif "INTEL" in cpu:
+        return "INTEL"
+    return "UNKNOWN"
 
 
 def get_gpu_info() -> str:
@@ -48,12 +57,22 @@ def get_gpu_info() -> str:
             )
             for line in result.stdout.splitlines():
                 if "VGA compatible controller" in line or "3D controller" in line:
-                    # Enlève l'adresse PCI au début (ex: '03:00.0 ')
-                    gpu_name = line.split(":", 2)[-1].strip()
-                    return gpu_name
+                    return line.split(":", 2)[-1].strip()
         except Exception:
             pass
     return "Non détectée"
+
+
+def get_gpu_vendor() -> str:
+    """Détecte la marque principale de la carte graphique."""
+    gpu = get_gpu_info().upper()
+    if "NVIDIA" in gpu:
+        return "NVIDIA"
+    elif "AMD" in gpu or "RADEON" in gpu or "ADVANCED MICRO DEVICES" in gpu:
+        return "AMD"
+    elif "INTEL" in gpu:
+        return "INTEL"
+    return "UNKNOWN"
 
 
 def get_ram_info() -> str:
@@ -88,8 +107,10 @@ def get_installed_packages_count() -> str:
             pass
     return "Indisponible"
 
+
 def is_package_installed(package_name: str) -> bool:
-    """Vérifie si un paquet précis est déjà installé sur le système."""
+    """Vérifie si un paquet est installé via pacman/AUR, Flatpak ou directement en binaire."""
+    # 1. Vérification Pacman / AUR
     if shutil.which("pacman"):
         try:
             result = subprocess.run(
@@ -98,18 +119,63 @@ def is_package_installed(package_name: str) -> bool:
                 stderr=subprocess.DEVNULL,
                 check=False,
             )
-            return result.returncode == 0
+            if result.returncode == 0:
+                return True
         except Exception:
             pass
+
+    # 2. Vérification Flatpak (recherche partielle ou par ID Flatpak)
+    if shutil.which("flatpak"):
+        try:
+            result = subprocess.run(
+                ["flatpak", "list"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                check=False,
+            )
+            if result.returncode == 0:
+                # Vérifie si le nom du paquet ou sa version Flatpak (ex: com.spotify.Client) est dans la liste
+                output = result.stdout.lower()
+                clean_name = package_name.lower().replace("-launcher", "").replace("-bin", "")
+                if clean_name in output:
+                    return True
+        except Exception:
+            pass
+
+    # 3. Vérification de l'exécutable binaire dans le PATH
+    if shutil.which(package_name):
+        return True
+
     return False
 
-def get_gpu_vendor() -> str:
-    """Détecte la marque principale de la carte graphique (NVIDIA, AMD, INTEL)."""
-    gpu_info = get_gpu_info().upper()
-    if "NVIDIA" in gpu_info:
-        return "NVIDIA"
-    elif "AMD" in gpu_info or "RADEON" in gpu_info or "ADVANCED MICRO DEVICES" in gpu_info:
-        return "AMD"
-    elif "INTEL" in gpu_info:
-        return "INTEL"
-    return "UNKNOWN"
+
+def is_multilib_enabled() -> bool:
+    """Vérifie si le dépôt [multilib] est activé dans /etc/pacman.conf."""
+    try:
+        with open("/etc/pacman.conf", "r") as f:
+            for line in f:
+                if line.strip() == "[multilib]":
+                    return True
+    except Exception:
+        pass
+    return False
+
+
+def check_failed_services() -> list:
+    """Retourne la liste des services systemd en échec."""
+    if shutil.which("systemctl"):
+        try:
+            result = subprocess.run(
+                ["systemctl", "--failed", "--plain", "--no-legend"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                check=False,
+            )
+            if result.returncode == 0 and result.stdout.strip():
+                lines = result.stdout.strip().splitlines()
+                return [line.split()[0] for line in lines if line.strip()]
+        except Exception:
+            pass
+    return []

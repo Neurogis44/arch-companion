@@ -1,50 +1,81 @@
+import shutil
 import subprocess
-from services.system import is_package_installed
+from services.system import get_cpu_vendor, is_package_installed
 
-SYSTEM_PACKAGES = [
-    "reflector",
-    "ufw",
-    "micro",
-    "bash-completion",
-]
 
-def show_system_utils_module():
-    """Affiche le module Utilitaires Système avec diagnostic."""
-    print("\n" + "=" * 50)
-    print("      🛠️ PARCOURS UTILITAIRES SYSTÈME")
-    print("=" * 50)
-    print("Analyse de ton système en cours...\n")
-
-    print("💡 RAPPELS ARCH WIKI :")
-    print("  • Reflector : Miroirs pacman ultra rapides.")
-    print("  • UFW : Pare-feu simple à activer (sudo ufw enable).")
-    print("  • Micro : Éditeur de texte très intuitif dans le terminal.")
-    print("📖 Arch Wiki : https://wiki.archlinux.org/title/System_maintenance\n")
-
-    missing_packages = []
-    print("📦 État des paquets sur ta machine :")
-    for pkg in SYSTEM_PACKAGES:
-        if is_package_installed(pkg):
-            print(f"  [✓] {pkg} (Déjà installé)")
-        else:
-            print(f"  [ ] {pkg} (Manquant)")
-            missing_packages.append(pkg)
-
-    if not missing_packages:
-        print("\n🎉 Tous les utilitaires système essentiels sont déjà installés !")
-        input("\nAppuie sur Entrée pour revenir au menu principal...")
+def install_packages(packages: list, use_aur: bool = False):
+    """Exécute pacman ou yay selon la provenance des paquets."""
+    if not packages:
+        print("\n⚠️ Aucun paquet sélectionné.")
         return
 
-    print(f"\n💻 Commande qui sera exécutée ({len(missing_packages)} paquet(s) à installer) :")
-    cmd_str = f"sudo pacman -S --needed {' '.join(missing_packages)}"
-    print(f"   {cmd_str}\n")
-
-    choice = input("👉 Veux-tu installer les paquets manquants ? (o/N) : ").strip().lower()
-
-    if choice == "o":
-        print("\n🚀 Lancement de pacman...\n")
-        subprocess.run(["sudo", "pacman", "-S", "--needed"] + missing_packages, check=False)
+    if use_aur:
+        if shutil.which("yay"):
+            print(f"\n🚀 Lancement de yay pour l'AUR : {' '.join(packages)}\n")
+            subprocess.run(["yay", "-S", "--needed"] + packages, check=False)
+        else:
+            print("\n❌ 'yay' n'est pas installé sur ton système !")
+            print("👉 Utilise le module 1 (Assistants AUR) pour l'installer d'abord.")
     else:
-        print("\n❌ Installation annulée.")
+        print(f"\n🚀 Lancement de pacman : {' '.join(packages)}\n")
+        subprocess.run(["sudo", "pacman", "-S", "--needed"] + packages, check=False)
 
-    input("\nAppuie sur Entrée pour revenir au menu principal...")
+
+def show_system_utils_module():
+    """Affiche le module Utilitaires Système avec sélection sur-mesure."""
+    print("\n" + "=" * 60)
+    print("      🛠️ PARCOURS UTILITAIRES SYSTÈME")
+    print("=" * 60)
+    print("Analyse de ton matériel et de tes utilitaires...\n")
+
+    cpu_vendor = get_cpu_vendor()
+
+    official_packages = {
+        "reflector": "Mise à jour automatique des miroirs pacman rapides",
+        "ufw": "Pare-feu simple (Uncomplicated Firewall)",
+        "micro": "Éditeur de texte moderne et intuitif pour le terminal",
+        "bash-completion": "Auto-complétion intelligente pour le terminal Bash",
+        "btop": "Moniteur de ressources système ultra élégant",
+        "fastfetch": "Affichage esthétique des infos système",
+    }
+
+    if cpu_vendor == "AMD":
+        print(" 🔴 Processeur AMD détecté -> Microcode : amd-ucode")
+        official_packages["amd-ucode"] = "Mises à jour de sécurité majeures du CPU AMD"
+    elif cpu_vendor == "INTEL":
+        print(" 🔵 Processeur Intel détecté -> Microcode : intel-ucode")
+        official_packages["intel-ucode"] = "Mises à jour de sécurité majeures du CPU Intel"
+
+    print("\n📦 ÉTAT DES PAQUETS SUR TA MACHINE :")
+    print("--- Dépôts Officiels (pacman) ---")
+    for pkg, desc in official_packages.items():
+        status = "[✓] Déjà installé" if is_package_installed(pkg) else "[ ] Manquant"
+        print(f"  {status} {pkg:<22} : {desc}")
+
+    print("\n------------------------------------------------------------")
+    print("1. 🚀 Tout installer/compléter (Utilitaires officiels)")
+    print("2. 🎯 Sélectionner les paquets un par un (Officiels)")
+    print("0. ↩️ Retour au menu principal")
+    print("------------------------------------------------------------")
+
+    choice = input("👉 Ton choix : ").strip()
+
+    if choice == "1":
+        missing = [pkg for pkg in official_packages if not is_package_installed(pkg)]
+        if missing:
+            install_packages(missing, use_aur=False)
+        else:
+            print("\n🎉 Tous les utilitaires système officiels sont déjà installés !")
+
+    elif choice == "2":
+        selected = []
+        print("\n--- SÉLECTION PERSONNALISÉE UTILITAIRES ---")
+        for pkg, desc in official_packages.items():
+            status = "✓ Déjà installé" if is_package_installed(pkg) else "Manquant"
+            c = input(f" ❓ Installer {pkg} ({desc}) [{status}] ? (o/N) : ").strip().lower()
+            if c == "o":
+                selected.append(pkg)
+        if selected:
+            install_packages(selected, use_aur=False)
+
+    input("\nAppuie sur Entrée pour continuer...")

@@ -10,10 +10,12 @@ from services.system import (
     get_ram_info,
 )
 from modules.aur import show_aur_module
+from modules.web import show_web_module  # <-- NOUVELLE LIGNE
 from modules.multimedia import show_multimedia_module
 from modules.gaming import show_gaming_module
 from modules.office import show_office_module
 from modules.system_utils import show_system_utils_module
+from modules.maintenance import show_maintenance_module
 
 
 def show_dashboard():
@@ -39,12 +41,14 @@ def main():
 
         show_dashboard()
 
-        print("--- PARCOURS POST-INSTALLATION ---")
+        print("--- PARCOURS POST-INSTALLATION & MAINTENANCE ---")
         print("1. 📦 Assistants AUR (yay, pamac-aur) [Recommandé en premier]")
-        print("2. 🎵 Codecs & Multimédia (Audio, Vidéo, Polices)")
-        print("3. 🎮 Pack Gaming (Steam, Vulkan, Drivers)")
-        print("4. 📝 Bureautique & Outils (LibreOffice, PDF, Archives)")
-        print("5. 🛠️ Utilitaires Système (Microcode, Reflector, Pare-feu)")
+        print("2. 🌐 Navigateurs Web (Firefox, Chrome, Brave, Edge...)") # <-- NOUVELLE LIGNE
+        print("3. 🎵 Codecs & Multimédia (Audio, Vidéo, Polices)")
+        print("4. 🎮 Pack Gaming (Steam, Vulkan, Drivers)")
+        print("5. 📝 Bureautique & Outils (LibreOffice, OnlyOffice, PDF)")
+        print("6. 🛠️ Utilitaires Système (Microcode CPU, Reflector, Pare-feu)")
+        print("7. 🧹 Maintenance & Santé du système (Nettoyage cache, Services)")
         print("0. 🚪 Quitter")
         print()
 
@@ -53,13 +57,17 @@ def main():
         if choice == "1":
             show_aur_module()
         elif choice == "2":
-            show_multimedia_module()
+            show_web_module()  # <-- MODIFIÉ ICI
         elif choice == "3":
-            show_gaming_module()
+            show_multimedia_module()
         elif choice == "4":
-            show_office_module()
+            show_gaming_module()
         elif choice == "5":
+            show_office_module()
+        elif choice == "6":
             show_system_utils_module()
+        elif choice == "7":
+            show_maintenance_module()
         elif choice == "0":
             print("\nÀ bientôt sur Arch Linux !")
             sys.exit(0)
