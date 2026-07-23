@@ -9,6 +9,7 @@ from services.system import (
     get_kernel_version,
     get_ram_info,
 )
+from modules.aur import show_aur_module
 from modules.multimedia import show_multimedia_module
 from modules.gaming import show_gaming_module
 from modules.office import show_office_module
@@ -39,22 +40,25 @@ def main():
         show_dashboard()
 
         print("--- PARCOURS POST-INSTALLATION ---")
-        print("1. 🎵 Codecs & Multimédia (Audio, Vidéo, Polices)")
-        print("2. 🎮 Pack Gaming (Steam, Vulkan, Drivers)")
-        print("3. 📝 Bureautique & Outils (LibreOffice, PDF, Archives)")
-        print("4. 🛠️ Utilitaires Système (Microcode, Reflector, Pare-feu)")
+        print("1. 📦 Assistants AUR (yay, pamac-aur) [Recommandé en premier]")
+        print("2. 🎵 Codecs & Multimédia (Audio, Vidéo, Polices)")
+        print("3. 🎮 Pack Gaming (Steam, Vulkan, Drivers)")
+        print("4. 📝 Bureautique & Outils (LibreOffice, PDF, Archives)")
+        print("5. 🛠️ Utilitaires Système (Microcode, Reflector, Pare-feu)")
         print("0. 🚪 Quitter")
         print()
 
         choice = input("👉 Ton choix : ").strip()
 
         if choice == "1":
-            show_multimedia_module()
+            show_aur_module()
         elif choice == "2":
-            show_gaming_module()
+            show_multimedia_module()
         elif choice == "3":
-            show_office_module()
+            show_gaming_module()
         elif choice == "4":
+            show_office_module()
+        elif choice == "5":
             show_system_utils_module()
         elif choice == "0":
             print("\nÀ bientôt sur Arch Linux !")
