@@ -42,9 +42,15 @@ def show_gaming_module():
         "steam": t("game_desc_steam"),
         "gamemode": t("game_desc_gamemode"),
         "lib32-gamemode": t("game_desc_lib32_gamemode"),
+        "mangohud": t("game_desc_mangohud"),
+        "goverlay": t("game_desc_goverlay"),
         "vulkan-icd-loader": t("game_desc_vulkan_loader"),
         "lib32-vulkan-icd-loader": t("game_desc_lib32_vulkan_loader"),
         "lutris": t("game_desc_lutris"),
+    }
+
+    aur_packages = {
+        "heroic-games-launcher-bin": t("game_desc_heroic"),
     }
 
     if vendor == "NVIDIA":
@@ -55,14 +61,11 @@ def show_gaming_module():
         print(f" 🔴 {t('game_gpu_amd')}")
         official_packages["vulkan-radeon"] = t("game_desc_vulkan_radeon")
         official_packages["lib32-vulkan-radeon"] = t("game_desc_lib32_vulkan_radeon")
+        official_packages["lact"] = t("game_desc_lact")
     elif vendor == "INTEL":
         print(f" 🔵 {t('game_gpu_intel')}")
         official_packages["vulkan-intel"] = t("game_desc_vulkan_intel")
         official_packages["lib32-vulkan-intel"] = t("game_desc_lib32_vulkan_intel")
-
-    aur_packages = {
-        "heroic-games-launcher-bin": t("game_desc_heroic"),
-    }
 
     print(f"\n📦 {t('game_status_header')} :")
     print(f"--- {t('game_section_official')} ---")
@@ -88,6 +91,10 @@ def show_gaming_module():
         missing = [pkg for pkg in official_packages if not is_package_installed(pkg)]
         if missing:
             install_packages(missing, use_aur=False)
+            # Activation du service LACT si installé
+            if "lact" in missing:
+                print("\n⚙️ Activation du service lactd...")
+                subprocess.run(["sudo", "systemctl", "enable", "--now", "lactd"], check=False)
         else:
             print(f"\n🎉 {t('game_all_official_installed')}")
 
@@ -101,6 +108,9 @@ def show_gaming_module():
                 selected.append(pkg)
         if selected:
             install_packages(selected, use_aur=False)
+            if "lact" in selected:
+                print("\n⚙️ Activation du service lactd...")
+                subprocess.run(["sudo", "systemctl", "enable", "--now", "lactd"], check=False)
 
     elif choice == "3":
         if is_package_installed("heroic-games-launcher-bin"):

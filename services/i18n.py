@@ -234,6 +234,9 @@ MESSAGES = {
         "game_ask_install": "Installer",
         "game_all_official_installed": "Tous les paquets Gaming officiels sont déjà installés !",
         "game_heroic_installed": "Heroic Games Launcher est déjà installé sur ta machine !",
+        "game_desc_mangohud": "Affichage des FPS & métriques en jeu (HUD)",
+        "game_desc_goverlay": "Interface graphique de configuration pour MangoHud",
+        "game_desc_lact": "Centre de contrôle pour GPU AMD (Overclock/Fans)",
 
         # Developer Module
         "dev_title": "👨‍💻 PACK DÉVELOPPEUR & OUTILS DE CODE",
@@ -272,6 +275,8 @@ MESSAGES = {
         "maint_opt0": "0. ↩️ Annuler",
         "maint_searching_orphans": "🔍 Recherche des paquets orphelins...",
         "maint_no_orphans": "🎉 Aucun paquet orphelin trouvé ! Ton système est parfaitement propre.",
+        "maint_pacman_contrib_missing": "Le paquet 'pacman-contrib' est requis pour utiliser paccache.",
+        "maint_install_contrib": "Installer 'pacman-contrib' maintenant ?",
     },
     "en": {
         # Dashboard & Main Menu
@@ -505,6 +510,9 @@ MESSAGES = {
         "game_ask_install": "Install",
         "game_all_official_installed": "All official Gaming packages are already installed!",
         "game_heroic_installed": "Heroic Games Launcher is already installed on your system!",
+        "game_desc_mangohud": "In-game FPS & performance metrics overlay (HUD)",
+        "game_desc_goverlay": "Graphical configuration tool for MangoHud",
+        "game_desc_lact": "Control application for AMD GPUs (Overclock/Fans)",
 
         # Developer Module
         "dev_title": "👨‍💻 DEVELOPER PACK & CODE TOOLS",
@@ -543,6 +551,8 @@ MESSAGES = {
         "maint_opt0": "0. ↩️ Cancel",
         "maint_searching_orphans": "🔍 Searching for orphan packages...",
         "maint_no_orphans": "🎉 No orphan packages found! Your system is perfectly clean.",
+        "maint_pacman_contrib_missing": "The 'pacman-contrib' package is required to use paccache.",
+        "maint_install_contrib": "Install 'pacman-contrib' now?",
     },
 }
 

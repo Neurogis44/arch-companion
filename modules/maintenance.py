@@ -1,3 +1,4 @@
+import shutil
 import subprocess
 from services.i18n import t
 from services.system import check_failed_services
@@ -29,6 +30,16 @@ def show_maintenance_module():
     choice = input(t("choice")).strip()
 
     if choice == "1":
+        # Vérification si paccache (pacman-contrib) est installé
+        if not shutil.which("paccache"):
+            print(f"\n⚠️ {t('maint_pacman_contrib_missing')}")
+            c = input(f"👉 {t('maint_install_contrib')} (o/N / y/N) : ").strip().lower()
+            if c in ["o", "y"]:
+                subprocess.run(["sudo", "pacman", "-S", "--needed", "pacman-contrib"], check=False)
+            else:
+                input(f"\n{t('press_enter')}")
+                return
+
         print("\n🚀 Nettoyage du cache pacman (paccache -r)...")
         subprocess.run(["sudo", "paccache", "-r"], check=False)
 
