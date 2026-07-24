@@ -27,7 +27,7 @@ cat << 'EOF' > README_EN.md
 
 ```bash
 # 1. Clone the repository
-git clone [https://github.com/neurogis44/arch-companion.git](https://github.com/neurogis44/arch-companion.git)
+git clone https://github.com/neurogis44/arch-companion.git
 
 # 2. Enter the directory
 cd arch-companion
