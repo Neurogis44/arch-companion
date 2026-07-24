@@ -1,6 +1,6 @@
 # 🚀 Arch Companion
 
-🇫🇷 [Français](./README.md) | 🇬🇧 **English**
+🇫🇷 **Français** | 🇬🇧 [English](https://github.com/Neurogis44/arch-companion/blob/main/README_EN.md)
 
 ---
 
@@ -26,7 +26,7 @@
 
 ```bash
 # 1. Cloner le dépôt
-git clone [https://github.com/neurogis44/arch-companion.git](https://github.com/neurogis44/arch-companion.git)
+git clone https://github.com/neurogis44/arch-companion.git
 
 # 2. Accéder au dossier
 cd arch-companion
