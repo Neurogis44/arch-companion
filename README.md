@@ -1,10 +1,8 @@
 # 🚀 Arch Companion
 
-[Français](#-français) | [English](#-english)
+🇫🇷 **Français** | 🇬🇧 [English](README_EN.md)
 
 ---
-
-## 🇫🇷 Français
 
 **Arch Companion** est un script TUI (Interface Terminal) interactif et bilingue conçu pour automatiser et simplifier la configuration post-installation d'Arch Linux.
 
