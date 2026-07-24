@@ -20,6 +20,7 @@ from modules.office import show_office_module
 from modules.system_utils import show_system_utils_module
 from modules.terminal import show_terminal_module
 from modules.web import show_web_module
+from modules.desktop_fix import show_desktop_fix_module
 
 
 def show_dashboard():
@@ -58,6 +59,7 @@ def main():
         print(t("m_gaming"))
         print(t("m_dev"))
         print(t("m_maint"))
+        print(t("m_de_fix"))
         print("------------------------------------------------------------")
         print("Q. 🚪 Quit / Quitter")
         print()
@@ -86,6 +88,8 @@ def main():
             show_dev_module()
         elif choice == "10":
             show_maintenance_module()
+        elif choice == "11":
+            show_desktop_fix_module()
         elif choice == "q":
             print("\nBye / À bientôt sur Arch Linux !")
             sys.exit(0)

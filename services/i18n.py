@@ -277,6 +277,21 @@ MESSAGES = {
         "maint_no_orphans": "🎉 Aucun paquet orphelin trouvé ! Ton système est parfaitement propre.",
         "maint_pacman_contrib_missing": "Le paquet 'pacman-contrib' est requis pour utiliser paccache.",
         "maint_install_contrib": "Installer 'pacman-contrib' maintenant ?",
+
+        # Menu Principal (Ajout de la ligne 11)
+        "m_de_fix": "11. 🖥️ Compléter mon bureau (KDE, GNOME, XFCE - Bluetooth, Polices, Archives...)",
+
+        # Desktop Fix Module
+        "de_title": "🖥️ COMPLÉTION DE L'ENVIRONNEMENT DE BUREAU",
+        "de_analyzing": "Analyse des paquets d'intégration du bureau...",
+        "de_detected": "Environnement de bureau détecté",
+        "de_status_header": "ÉLEMENTS D'INTÉGRATION RECOMMANDÉS",
+        "de_opt1": "1. 🚀 Tout installer / activer les services manquants (Bluetooth, CUPS, Polices...)",
+        "de_opt0": "0. ↩️ Retour au menu principal",
+        "de_already_complete": "Ton environnement de bureau est déjà 100% complet !",
+        "de_installing_missing": "Installation des paquets manquants",
+        "de_enabling_bluetooth": "Activation du service Bluetooth (bluetooth.service)",
+        "de_enabling_cups": "Activation du service d'impression (cups.service)",
     },
     "en": {
         # Dashboard & Main Menu
@@ -553,6 +568,21 @@ MESSAGES = {
         "maint_no_orphans": "🎉 No orphan packages found! Your system is perfectly clean.",
         "maint_pacman_contrib_missing": "The 'pacman-contrib' package is required to use paccache.",
         "maint_install_contrib": "Install 'pacman-contrib' now?",
+
+        # Main Menu (Option 11)
+        "m_de_fix": "11. 🖥️ Complete Desktop Environment (KDE, GNOME, XFCE - Bluetooth, Fonts, Archives...)",
+
+        # Desktop Fix Module
+        "de_title": "🖥️ DESKTOP ENVIRONMENT COMPLETION",
+        "de_analyzing": "Analyzing desktop integration packages...",
+        "de_detected": "Detected Desktop Environment",
+        "de_status_header": "RECOMMENDED INTEGRATION PACKAGES",
+        "de_opt1": "1. 🚀 Install all / enable missing services (Bluetooth, CUPS, Fonts...)",
+        "de_opt0": "0. ↩️ Return to main menu",
+        "de_already_complete": "Your desktop environment is already 100% complete!",
+        "de_installing_missing": "Installing missing packages",
+        "de_enabling_bluetooth": "Enabling Bluetooth service (bluetooth.service)",
+        "de_enabling_cups": "Enabling printing service (cups.service)",
     },
 }
 
