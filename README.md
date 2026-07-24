@@ -1,6 +1,6 @@
 # 🚀 Arch Companion
 
-🇫🇷 **Français** | 🇬🇧 [English](README_EN.md)
+🇫🇷 [Français](./README.md) | 🇬🇧 **English**
 
 ---
 
