@@ -78,6 +78,13 @@ MESSAGES = {
         "sys_ufw_launch": "Configuration du pare-feu UFW...",
         "sys_ufw_enabling": "Activation du service UFW...",
         "sys_ufw_success": "Pare-feu UFW activé et opérationnel !",
+        "sys_multilib_desc": "Requis pour Steam, WINE et applications 32-bit",
+        "sys_multilib_already_active": "Le dépôt [multilib] est déjà activé dans pacman.conf !",
+        "sys_multilib_enabling": "Activation du dépôt [multilib] dans /etc/pacman.conf",
+        "sys_pacman_syncing": "Mise à jour de la base de données pacman (-Sy)",
+        "sys_multilib_success": "Dépôt [multilib] activé avec succès !",
+        "sys_multilib_error": "Échec de l'activation automatique de [multilib].",
+        "sys_opt4": "4. ⚙️ Activer le dépôt [multilib] (Steam / 32-bit)",
 
         # AUR Module
         "aur_title": "📦 ASSISTANTS AUR (ARCH USER REPOSITORY)",
@@ -385,6 +392,13 @@ MESSAGES = {
         "sys_ufw_launch": "Configuring UFW firewall...",
         "sys_ufw_enabling": "Enabling UFW service...",
         "sys_ufw_success": "UFW firewall enabled and active!",
+        "sys_multilib_desc": "Required for Steam, WINE and 32-bit apps",
+        "sys_multilib_already_active": "The [multilib] repository is already active in pacman.conf!",
+        "sys_multilib_enabling": "Enabling [multilib] repository in /etc/pacman.conf",
+        "sys_pacman_syncing": "Refreshing pacman databases (-Sy)",
+        "sys_multilib_success": "[multilib] repository successfully enabled!",
+        "sys_multilib_error": "Failed to automatically enable [multilib].",
+        "sys_opt4": "4. ⚙️ Enable [multilib] repository (Steam / 32-bit)",
 
         # AUR Module
         "aur_title": "📦 AUR HELPERS (ARCH USER REPOSITORY)",

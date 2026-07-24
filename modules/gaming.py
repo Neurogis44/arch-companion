@@ -2,6 +2,8 @@ import shutil
 import subprocess
 from services.i18n import t
 from services.system import get_gpu_vendor, is_multilib_enabled, is_package_installed
+# Importer la fonction depuis system_utils pour activer multilib
+from modules.system_utils import enable_multilib
 
 
 def install_packages(packages: list, use_aur: bool = False):
@@ -9,6 +11,12 @@ def install_packages(packages: list, use_aur: bool = False):
     if not packages:
         print(f"\n⚠️ {t('game_no_pkg_selected')}")
         return
+
+    # Si on installe des paquets officiels (non AUR), on s'assure que multilib est activé
+    if not use_aur:
+        if not is_multilib_enabled():
+            print("\n⚙️ Verification du dépôt [multilib]...")
+            enable_multilib()
 
     if use_aur:
         if shutil.which("yay"):
@@ -92,7 +100,7 @@ def show_gaming_module():
         if missing:
             install_packages(missing, use_aur=False)
             # Activation du service LACT si installé
-            if "lact" in missing:
+            if "lact" in missing or is_package_installed("lact"):
                 print("\n⚙️ Activation du service lactd...")
                 subprocess.run(["sudo", "systemctl", "enable", "--now", "lactd"], check=False)
         else:
@@ -108,7 +116,7 @@ def show_gaming_module():
                 selected.append(pkg)
         if selected:
             install_packages(selected, use_aur=False)
-            if "lact" in selected:
+            if "lact" in selected or is_package_installed("lact"):
                 print("\n⚙️ Activation du service lactd...")
                 subprocess.run(["sudo", "systemctl", "enable", "--now", "lactd"], check=False)
 
