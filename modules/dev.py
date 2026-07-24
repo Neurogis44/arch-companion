@@ -1,103 +1,108 @@
 import shutil
 import subprocess
+from services.i18n import t
 from services.system import is_package_installed
 
-DEV_EDITORS = {
-    "visual-studio-code-bin": "VS Code (Version officielle Microsoft via AUR)",
-    "vscodium": "VSCodium (Version 100% open-source sans télémétrie)",
-}
 
-DEV_LANGUAGES = {
-    "python": "Langage Python 3 & environnement de base",
-    "go": "Langage Go (Golang) & outils de compilation",
-    "nodejs": "Environnement JavaScript Node.js & npm",
-}
-
-DEV_TOOLS = {
-    "git": "Gestionnaire de version Git",
-    "docker": "Moteur de conteneurisation Docker",
-    "docker-compose": "Gestion d'applications multi-conteneurs Docker",
-    "postman-bin": "Outil de test d'API REST (AUR)",
-}
+def get_dev_dicts():
+    """Retourne les dictionnaires d'outils dev traduits dynamiquement."""
+    editors = {
+        "visual-studio-code-bin": t("dev_desc_vscode"),
+        "vscodium": t("dev_desc_vscodium"),
+    }
+    languages = {
+        "python": t("dev_desc_python"),
+        "go": t("dev_desc_go"),
+        "nodejs": t("dev_desc_node"),
+    }
+    tools = {
+        "git": t("dev_desc_git"),
+        "docker": t("dev_desc_docker"),
+        "docker-compose": t("dev_desc_docker_compose"),
+        "postman-bin": t("dev_desc_postman"),
+    }
+    return editors, languages, tools
 
 
 def install_packages(packages: list, use_aur: bool = False):
     """Exécute pacman ou yay selon la provenance des paquets."""
     if not packages:
-        print("\n⚠️ Aucun paquet sélectionné.")
+        print(f"\n⚠️ {t('dev_no_pkg_selected')}")
         return
 
     if use_aur:
         if shutil.which("yay"):
-            print(f"\n🚀 Lancement de yay : {' '.join(packages)}\n")
+            print(f"\n🚀 {t('dev_launching_yay')} : {' '.join(packages)}\n")
             subprocess.run(["yay", "-S", "--needed"] + packages, check=False)
         else:
-            print("\n❌ 'yay' n'est pas installé sur ton système !")
-            print("👉 Utilise le module 1 (Assistants AUR) pour l'installer d'abord.")
+            print(f"\n❌ {t('dev_yay_not_installed')}")
+            print(f"👉 {t('dev_yay_hint')}")
     else:
-        print(f"\n🚀 Lancement de pacman : {' '.join(packages)}\n")
+        print(f"\n🚀 {t('dev_launching_pacman')} : {' '.join(packages)}\n")
         subprocess.run(["sudo", "pacman", "-S", "--needed"] + packages, check=False)
 
 
 def show_dev_module():
-    """Affiche le module Outils Développeur."""
+    """Affiche le module Outils Développeur bilingue."""
+    dev_editors, dev_languages, dev_tools = get_dev_dicts()
+
     print("\n" + "=" * 60)
-    print("      👨‍💻 PACK DÉVELOPPEUR & OUTILS DE CODE")
+    print(f"      {t('dev_title')}")
     print("=" * 60)
-    print("Analyse de ton environnement de développement...\n")
+    print(f"{t('dev_analyzing')}\n")
 
-    print("📦 ÉTAT DES OUTILS DE DEV :")
-    print("--- Éditeurs & IDE ---")
-    for pkg, desc in DEV_EDITORS.items():
-        status = "[✓] Déjà installé" if is_package_installed(pkg) else "[ ] Manquant"
+    print(f"📦 {t('dev_status_header')} :")
+    print(f"--- {t('dev_section_editors')} ---")
+    for pkg, desc in dev_editors.items():
+        status = f"[✓] {t('installed')}" if is_package_installed(pkg) else f"[ ] {t('missing')}"
         print(f"  {status} {pkg:<24} : {desc}")
 
-    print("\n--- Langages & Runtimes ---")
-    for pkg, desc in DEV_LANGUAGES.items():
-        status = "[✓] Déjà installé" if is_package_installed(pkg) else "[ ] Manquant"
+    print(f"\n--- {t('dev_section_languages')} ---")
+    for pkg, desc in dev_languages.items():
+        status = f"[✓] {t('installed')}" if is_package_installed(pkg) else f"[ ] {t('missing')}"
         print(f"  {status} {pkg:<24} : {desc}")
 
-    print("\n--- Outils & Conteneurs ---")
-    for pkg, desc in DEV_TOOLS.items():
-        status = "[✓] Déjà installé" if is_package_installed(pkg) else "[ ] Manquant"
+    print(f"\n--- {t('dev_section_tools')} ---")
+    for pkg, desc in dev_tools.items():
+        status = f"[✓] {t('installed')}" if is_package_installed(pkg) else f"[ ] {t('missing')}"
         print(f"  {status} {pkg:<24} : {desc}")
 
     print("\n------------------------------------------------------------")
-    print("1. 📝 Éditeurs de code (VS Code / VSCodium)")
-    print("2. ⚡ Langages (Python, Go, Node.js)")
-    print("3. 📦 Outils & Conteneurs (Git, Docker, Postman)")
-    print("0. ↩️ Retour au menu principal")
+    print(t("dev_opt1"))
+    print(t("dev_opt2"))
+    print(t("dev_opt3"))
+    print(t("dev_opt0"))
     print("------------------------------------------------------------")
 
-    choice = input("👉 Ton choix : ").strip()
+    choice = input(t("choice")).strip()
 
     if choice == "1":
-        print("\n--- SÉLECTION ÉDITEURS ---")
-        for pkg, desc in DEV_EDITORS.items():
-            status = "✓ Déjà installé" if is_package_installed(pkg) else "Manquant"
-            c = input(f" ❓ Installer {pkg} ({desc}) [{status}] ? (o/N) : ").strip().lower()
-            if c == "o":
+        print(f"\n--- {t('dev_section_editors')} ---")
+        for pkg, desc in dev_editors.items():
+            status = t("installed") if is_package_installed(pkg) else t("missing")
+            c = input(f" ❓ {t('dev_ask_install')} {pkg} ({desc}) [{status}] ? (o/N / y/N) : ").strip().lower()
+            if c in ["o", "y"]:
                 use_aur = "bin" in pkg
                 install_packages([pkg], use_aur=use_aur)
 
     elif choice == "2":
         selected = []
-        print("\n--- SÉLECTION LANGAGES ---")
-        for pkg, desc in DEV_LANGUAGES.items():
-            status = "✓ Déjà installé" if is_package_installed(pkg) else "Manquant"
-            c = input(f" ❓ Installer {pkg} ({desc}) [{status}] ? (o/N) : ").strip().lower()
-            if c == "o":
+        print(f"\n--- {t('dev_section_languages')} ---")
+        for pkg, desc in dev_languages.items():
+            status = t("installed") if is_package_installed(pkg) else t("missing")
+            c = input(f" ❓ {t('dev_ask_install')} {pkg} ({desc}) [{status}] ? (o/N / y/N) : ").strip().lower()
+            if c in ["o", "y"]:
                 selected.append(pkg)
         if selected:
             install_packages(selected, use_aur=False)
 
     elif choice == "3":
-        print("\n--- SÉLECTION OUTILS & CONTENEURS ---")
-        for pkg, desc in DEV_TOOLS.items():
-            status = "✓ Déjà installé" if is_package_installed(pkg) else "Manquant"
-            c = input(f" ❓ Installer {pkg} ({desc}) [{status}] ? (o/N) : ").strip().lower()
-            if c == "o":
+        print(f"\n--- {t('dev_section_tools')} ---")
+        for pkg, desc in dev_tools.items():
+            status = t("installed") if is_package_installed(pkg) else t("missing")
+            c = input(f" ❓ {t('dev_ask_install')} {pkg} ({desc}) [{status}] ? (o/N / y/N) : ").strip().lower()
+            if c in ["o", "y"]:
                 use_aur = "bin" in pkg
                 install_packages([pkg], use_aur=use_aur)
 
-    input("\nAppuie sur Entrée pour continuer...")
+    input(f"\n{t('press_enter')}")

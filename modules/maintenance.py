@@ -1,36 +1,39 @@
 import subprocess
+from services.i18n import t
 from services.system import check_failed_services
 
+
 def show_maintenance_module():
-    """Affiche le module de maintenance système et nettoyage du cache."""
+    """Affiche le module de maintenance système bilingue."""
     print("\n" + "=" * 50)
-    print("      🧹 MAINTENANCE & SANTÉ DU SYSTÈME")
+    print(f"      {t('maint_title')}")
     print("=" * 50)
-    print("Analyse de la santé du système en cours...\n")
+    print(f"{t('maint_analyzing')}\n")
 
     # 1. Diagnostic des services systemd en échec
     failed = check_failed_services()
     if failed:
-        print(f" ⚠️ ATTENTION : {len(failed)} service(s) systemd en échec :")
+        print(f" ⚠️ ATTENTION : {len(failed)} service(s) systemd en échec / failed :")
         for srv in failed:
             print(f"    • {srv}")
-        print("   👉 Commande pour inspecter : systemctl status <service>")
+        print("   👉 Status : systemctl status <service>")
     else:
-        print(" [✓] Services systemd : Tous les services fonctionnent normalement !")
+        print(f" {t('maint_services_ok')}")
 
-    print("\n--- OPTIONS DE NETTOYAGE ---")
-    print("1. 🧹 Nettoyer le cache pacman (Garder uniquement les 2 dernières versions)")
-    print("2. 🗑️ Supprimer les paquets orphelins (Paquets installés comme dépendances inutilisées)")
-    print("0. ↩️ Annuler")
+    print(f"\n{t('maint_options')}")
+    print(t("maint_opt1"))
+    print(t("maint_opt2"))
+    print(t("maint_opt0"))
     print()
 
-    choice = input("👉 Ton choix : ").strip()
+    choice = input(t("choice")).strip()
 
     if choice == "1":
         print("\n🚀 Nettoyage du cache pacman (paccache -r)...")
         subprocess.run(["sudo", "paccache", "-r"], check=False)
+
     elif choice == "2":
-        print("\n🔍 Recherche des paquets orphelins...")
+        print(f"\n{t('maint_searching_orphans')}")
         try:
             # On vérifie d'abord s'il y a des orphelins
             result = subprocess.run(
@@ -40,18 +43,18 @@ def show_maintenance_module():
                 text=True,
                 check=False,
             )
-            
+
             orphans = result.stdout.strip().splitlines()
 
             if not orphans or not result.stdout.strip():
-                print("\n🎉 Aucun paquet orphelin trouvé ! Ton système est parfaitement propre.")
+                print(f"\n{t('maint_no_orphans')}")
             else:
-                print(f"\n📦 {len(orphans)} paquet(s) orphelin(s) trouvé(s) : {', '.join(orphans)}")
+                print(f"\n📦 {len(orphans)} orphan(s) / orphelin(s) : {', '.join(orphans)}")
                 cmd_str = f"sudo pacman -Rns {' '.join(orphans)}"
                 print(f"🚀 Exécution : {cmd_str}\n")
                 subprocess.run(["sudo", "pacman", "-Rns"] + orphans, check=False)
 
         except Exception as e:
-            print(f"\n❌ Erreur lors de la recherche d'orphelins : {e}")
+            print(f"\n❌ Error / Erreur : {e}")
 
-    input("\nAppuie sur Entrée pour revenir au menu principal...")
+    input(f"\n{t('press_enter')}")

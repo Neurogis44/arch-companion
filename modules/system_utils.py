@@ -1,81 +1,97 @@
 import shutil
 import subprocess
-from services.system import get_cpu_vendor, is_package_installed
+from services.i18n import t
+from services.system import is_package_installed
 
 
-def install_packages(packages: list, use_aur: bool = False):
-    """Exécute pacman ou yay selon la provenance des paquets."""
-    if not packages:
-        print("\n⚠️ Aucun paquet sélectionné.")
-        return
+def install_microcode():
+    """Détecte le CPU et installe le microcode approprié (intel-ucode ou amd-ucode)."""
+    try:
+        with open("/proc/cpuinfo", "r") as f:
+            cpu_info = f.read()
 
-    if use_aur:
-        if shutil.which("yay"):
-            print(f"\n🚀 Lancement de yay pour l'AUR : {' '.join(packages)}\n")
-            subprocess.run(["yay", "-S", "--needed"] + packages, check=False)
+        if "AuthenticAMD" in cpu_info:
+            pkg = "amd-ucode"
+            print(f"\n🧠 {t('sys_cpu_amd')}")
+        elif "GenuineIntel" in cpu_info:
+            pkg = "intel-ucode"
+            print(f"\n🧠 {t('sys_cpu_intel')}")
         else:
-            print("\n❌ 'yay' n'est pas installé sur ton système !")
-            print("👉 Utilise le module 1 (Assistants AUR) pour l'installer d'abord.")
-    else:
-        print(f"\n🚀 Lancement de pacman : {' '.join(packages)}\n")
-        subprocess.run(["sudo", "pacman", "-S", "--needed"] + packages, check=False)
+            print(f"\n⚠️ {t('sys_cpu_unknown')}")
+            return
+
+        if is_package_installed(pkg):
+            print(f"🎉 {pkg} {t('sys_ucode_installed')}")
+        else:
+            print(f"🚀 {t('sys_installing')} {pkg}...")
+            subprocess.run(["sudo", "pacman", "-S", "--needed", pkg], check=False)
+
+    except Exception as e:
+        print(f"❌ Error / Erreur : {e}")
+
+
+def configure_reflector():
+    """Installe et exécute Reflector pour trier les miroirs pacman les plus rapides."""
+    print(f"\n🌐 {t('sys_reflector_launch')}")
+    if not is_package_installed("reflector"):
+        subprocess.run(["sudo", "pacman", "-S", "--needed", "reflector"], check=False)
+
+    cmd = [
+        "sudo",
+        "reflector",
+        "--protocol",
+        "https",
+        "--latest",
+        "10",
+        "--sort",
+        "rate",
+        "--save",
+        "/etc/pacman.d/mirrorlist",
+    ]
+    print(f"🚀 Exécution : {' '.join(cmd)}\n")
+    subprocess.run(cmd, check=False)
+    print(f"🎉 {t('sys_reflector_success')}")
+
+
+def configure_firewall():
+    """Installe et active le pare-feu UFW."""
+    print(f"\n🛡️ {t('sys_ufw_launch')}")
+    if not is_package_installed("ufw"):
+        subprocess.run(["sudo", "pacman", "-S", "--needed", "ufw"], check=False)
+
+    print(f"🚀 {t('sys_ufw_enabling')}...")
+    subprocess.run(["sudo", "systemctl", "enable", "--now", "ufw"], check=False)
+    print(f"🎉 {t('sys_ufw_success')}")
 
 
 def show_system_utils_module():
-    """Affiche le module Utilitaires Système avec sélection sur-mesure."""
+    """Affiche le module Utilitaires Système."""
     print("\n" + "=" * 60)
-    print("      🛠️ PARCOURS UTILITAIRES SYSTÈME")
+    print(f"      {t('sys_title')}")
     print("=" * 60)
-    print("Analyse de ton matériel et de tes utilitaires...\n")
+    print(f"{t('sys_analyzing')}\n")
 
-    cpu_vendor = get_cpu_vendor()
+    has_reflector = is_package_installed("reflector")
+    has_ufw = is_package_installed("ufw")
 
-    official_packages = {
-        "reflector": "Mise à jour automatique des miroirs pacman rapides",
-        "ufw": "Pare-feu simple (Uncomplicated Firewall)",
-        "micro": "Éditeur de texte moderne et intuitif pour le terminal",
-        "bash-completion": "Auto-complétion intelligente pour le terminal Bash",
-        "btop": "Moniteur de ressources système ultra élégant",
-        "fastfetch": "Affichage esthétique des infos système",
-    }
-
-    if cpu_vendor == "AMD":
-        print(" 🔴 Processeur AMD détecté -> Microcode : amd-ucode")
-        official_packages["amd-ucode"] = "Mises à jour de sécurité majeures du CPU AMD"
-    elif cpu_vendor == "INTEL":
-        print(" 🔵 Processeur Intel détecté -> Microcode : intel-ucode")
-        official_packages["intel-ucode"] = "Mises à jour de sécurité majeures du CPU Intel"
-
-    print("\n📦 ÉTAT DES PAQUETS SUR TA MACHINE :")
-    print("--- Dépôts Officiels (pacman) ---")
-    for pkg, desc in official_packages.items():
-        status = "[✓] Déjà installé" if is_package_installed(pkg) else "[ ] Manquant"
-        print(f"  {status} {pkg:<22} : {desc}")
+    print(f"📦 {t('sys_tools_status')} :")
+    print(f"  [{'✓' if has_reflector else ' '}] Reflector : {t('sys_reflector_desc')}")
+    print(f"  [{'✓' if has_ufw else ' '}] UFW (Uncomplicated Firewall) : {t('sys_ufw_desc')}")
 
     print("\n------------------------------------------------------------")
-    print("1. 🚀 Tout installer/compléter (Utilitaires officiels)")
-    print("2. 🎯 Sélectionner les paquets un par un (Officiels)")
-    print("0. ↩️ Retour au menu principal")
+    print(t("sys_opt1"))
+    print(t("sys_opt2"))
+    print(t("sys_opt3"))
+    print(t("sys_opt0"))
     print("------------------------------------------------------------")
 
-    choice = input("👉 Ton choix : ").strip()
+    choice = input(t("choice")).strip()
 
     if choice == "1":
-        missing = [pkg for pkg in official_packages if not is_package_installed(pkg)]
-        if missing:
-            install_packages(missing, use_aur=False)
-        else:
-            print("\n🎉 Tous les utilitaires système officiels sont déjà installés !")
-
+        install_microcode()
     elif choice == "2":
-        selected = []
-        print("\n--- SÉLECTION PERSONNALISÉE UTILITAIRES ---")
-        for pkg, desc in official_packages.items():
-            status = "✓ Déjà installé" if is_package_installed(pkg) else "Manquant"
-            c = input(f" ❓ Installer {pkg} ({desc}) [{status}] ? (o/N) : ").strip().lower()
-            if c == "o":
-                selected.append(pkg)
-        if selected:
-            install_packages(selected, use_aur=False)
+        configure_reflector()
+    elif choice == "3":
+        configure_firewall()
 
-    input("\nAppuie sur Entrée pour continuer...")
+    input(f"\n{t('press_enter')}")

@@ -1,84 +1,86 @@
 import shutil
 import subprocess
+from services.i18n import t
 from services.system import is_package_installed
 
-# Navigateurs Open Source (Dépôts officiels)
-BROWSERS_OPEN_SOURCE = {
-    "firefox": "Le standard libre et respectueux de la vie privée",
-    "chromium": "Version 100% open-source à la base de Chrome",
-    "brave-bin": "Basé sur Chromium avec protections et bloqueurs natifs",
-}
 
-# Navigateurs Propriétaires (AUR & Officiel)
-BROWSERS_PROPRIETARY = {
-    "google-chrome": "Le navigateur de Google (AUR)",
-    "microsoft-edge-stable-bin": "Microsoft Edge pour Linux (AUR)",
-    "vivaldi": "Ultra-personnalisable et riche en fonctionnalités (pacman)",
-}
+def get_browsers_dicts():
+    """Retourne les dictionnaires de navigateurs traduits dynamiquement."""
+    open_source = {
+        "firefox": t("web_desc_firefox"),
+        "chromium": t("web_desc_chromium"),
+        "brave-bin": t("web_desc_brave"),
+    }
+    proprietary = {
+        "google-chrome": t("web_desc_chrome"),
+        "microsoft-edge-stable-bin": t("web_desc_edge"),
+        "vivaldi": t("web_desc_vivaldi"),
+    }
+    return open_source, proprietary
 
 
 def install_packages(packages: list, use_aur: bool = False):
     """Exécute pacman ou yay selon la provenance des paquets."""
     if not packages:
-        print("\n⚠️ Aucun paquet sélectionné.")
+        print(f"\n⚠️ {t('web_no_pkg_selected')}")
         return
 
     if use_aur:
         if shutil.which("yay"):
-            print(f"\n🚀 Lancement de yay : {' '.join(packages)}\n")
+            print(f"\n🚀 {t('web_launching_yay')} : {' '.join(packages)}\n")
             subprocess.run(["yay", "-S", "--needed"] + packages, check=False)
         else:
-            print("\n❌ 'yay' n'est pas installé sur ton système !")
-            print("👉 Utilise le module 1 (Assistants AUR) pour l'installer d'abord.")
+            print(f"\n❌ {t('web_yay_not_installed')}")
+            print(f"👉 {t('web_yay_hint')}")
     else:
-        print(f"\n🚀 Lancement de pacman : {' '.join(packages)}\n")
+        print(f"\n🚀 {t('web_launching_pacman')} : {' '.join(packages)}\n")
         subprocess.run(["sudo", "pacman", "-S", "--needed"] + packages, check=False)
 
 
 def show_web_module():
-    """Affiche le module des navigateurs web."""
-    print("\n" + "=" * 60)
-    print("      🌐 SELECTION DES NAVIGATEURS WEB")
-    print("=" * 60)
-    print("Analyse des navigateurs installés sur ta machine...\n")
+    """Affiche le module des navigateurs web bilingue."""
+    browsers_os, browsers_prop = get_browsers_dicts()
 
-    print("📦 ÉTAT DES NAVIGATEURS :")
-    print("--- Open Source (Libres) ---")
-    for pkg, desc in BROWSERS_OPEN_SOURCE.items():
-        status = "[✓] Déjà installé" if is_package_installed(pkg) else "[ ] Manquant"
+    print("\n" + "=" * 60)
+    print(f"      {t('web_title')}")
+    print("=" * 60)
+    print(f"{t('web_analyzing')}\n")
+
+    print(f"📦 {t('web_status_header')} :")
+    print(f"--- {t('web_section_os')} ---")
+    for pkg, desc in browsers_os.items():
+        status = f"[✓] {t('installed')}" if is_package_installed(pkg) else f"[ ] {t('missing')}"
         print(f"  {status} {pkg:<26} : {desc}")
 
-    print("\n--- Propriétaires / Code Fermé ---")
-    for pkg, desc in BROWSERS_PROPRIETARY.items():
-        status = "[✓] Déjà installé" if is_package_installed(pkg) else "[ ] Manquant"
+    print(f"\n--- {t('web_section_prop')} ---")
+    for pkg, desc in browsers_prop.items():
+        status = f"[✓] {t('installed')}" if is_package_installed(pkg) else f"[ ] {t('missing')}"
         print(f"  {status} {pkg:<26} : {desc}")
 
     print("\n------------------------------------------------------------")
-    print("1. 🔓 Installer un navigateur Open Source (Firefox, Chromium, Brave)")
-    print("2. 🔒 Installer un navigateur Propriétaire (Chrome, Edge, Vivaldi)")
-    print("0. ↩️ Retour au menu principal")
+    print(t("web_opt1"))
+    print(t("web_opt2"))
+    print(t("web_opt0"))
     print("------------------------------------------------------------")
 
-    choice = input("👉 Ton choix : ").strip()
+    choice = input(t("choice")).strip()
 
     if choice == "1":
-        print("\n--- CHOIX OPEN SOURCE ---")
-        for pkg, desc in BROWSERS_OPEN_SOURCE.items():
-            status = "✓ Déjà installé" if is_package_installed(pkg) else "Manquant"
-            c = input(f" ❓ Installer {pkg} ({desc}) [{status}] ? (o/N) : ").strip().lower()
-            if c == "o":
-                # Brave-bin utilise l'AUR, Firefox et Chromium utilisent pacman
+        print(f"\n--- {t('web_section_os')} ---")
+        for pkg, desc in browsers_os.items():
+            status = t("installed") if is_package_installed(pkg) else t("missing")
+            c = input(f" ❓ {t('web_ask_install')} {pkg} ({desc}) [{status}] ? (o/N / y/N) : ").strip().lower()
+            if c in ["o", "y"]:
                 use_aur = pkg.endswith("-bin")
                 install_packages([pkg], use_aur=use_aur)
 
     elif choice == "2":
-        print("\n--- CHOIX PROPRIÉTAIRE ---")
-        for pkg, desc in BROWSERS_PROPRIETARY.items():
-            status = "✓ Déjà installé" if is_package_installed(pkg) else "Manquant"
-            c = input(f" ❓ Installer {pkg} ({desc}) [{status}] ? (o/N) : ").strip().lower()
-            if c == "o":
-                # Chrome et Edge passent par l'AUR, Vivaldi par pacman
+        print(f"\n--- {t('web_section_prop')} ---")
+        for pkg, desc in browsers_prop.items():
+            status = t("installed") if is_package_installed(pkg) else t("missing")
+            c = input(f" ❓ {t('web_ask_install')} {pkg} ({desc}) [{status}] ? (o/N / y/N) : ").strip().lower()
+            if c in ["o", "y"]:
                 use_aur = "chrome" in pkg or "edge" in pkg
                 install_packages([pkg], use_aur=use_aur)
 
-    input("\nAppuie sur Entrée pour continuer...")
+    input(f"\n{t('press_enter')}")

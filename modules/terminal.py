@@ -1,6 +1,7 @@
 import os
 import shutil
 import subprocess
+from services.i18n import t
 from services.system import is_package_installed
 
 ALIASES_TO_ADD = """
@@ -27,29 +28,28 @@ def inject_aliases():
     file_name = os.path.basename(config_file)
 
     if not os.path.exists(config_file):
-        # Crée le fichier s'il n'existe pas
         open(config_file, "w").close()
 
     with open(config_file, "r") as f:
         content = f.read()
 
     if "ARCH COMPANION ALIASES" in content:
-        print(f"\n🎉 Les alias sont déjà présents dans ton {file_name} !")
+        print(f"\n🎉 {t('term_aliases_already_present')} {file_name} !")
         return
 
-    print(f"\n📝 Ajout des alias dans {config_file}...")
+    print(f"\n📝 {t('term_adding_aliases')} {config_file}...")
     try:
         with open(config_file, "a") as f:
             f.write(ALIASES_TO_ADD)
-        print(f"✅ Alias ajoutés avec succès dans {file_name} !")
-        print("💡 Exécute 'source ~/.bashrc' (ou relance ton terminal) pour les activer.")
+        print(f"✅ {t('term_aliases_success')} {file_name} !")
+        print(f"💡 {t('term_aliases_hint')}")
     except Exception as e:
-        print(f"❌ Erreur lors de l'écriture : {e}")
+        print(f"❌ Erreur : {e}")
 
 
 def install_starship():
-    """Installe Starship Prompt pour un terminal moderne et rapide."""
-    print("\n🚀 Installation de Starship Prompt...")
+    """Installe Starship Prompt."""
+    print(f"\n🚀 {t('term_installing_starship')}...")
     if not is_package_installed("starship"):
         subprocess.run(["sudo", "pacman", "-S", "--needed", "starship"], check=False)
 
@@ -62,38 +62,37 @@ def install_starship():
     if starship_line not in content:
         with open(config_file, "a") as f:
             f.write(f"\n# Starship Prompt\n{starship_line}\n")
-        print(f"✅ Starship a été activé dans {os.path.basename(config_file)} !")
+        print(f"✅ {t('term_starship_activated')} {os.path.basename(config_file)} !")
     else:
-        print("🎉 Starship est déjà configuré dans ton shell !")
+        print(f"🎉 {t('term_starship_already_active')}")
 
 
 def show_terminal_module():
-    """Affiche le module Personnalisation du Terminal."""
+    """Affiche le module Terminal."""
     print("\n" + "=" * 60)
-    print("      🎨 LOOK & CONFORT DU TERMINAL")
+    print(f"      {t('term_title')}")
     print("=" * 60)
-    print("Analyse de la configuration de ton terminal...\n")
+    print(f"{t('term_analyzing')}\n")
 
-    current_shell_config = detect_shell_config()
     has_starship = is_package_installed("starship")
     has_zsh = is_package_installed("zsh")
     has_fastfetch = is_package_installed("fastfetch")
 
-    print("📦 ÉTAT DES OUTILS TERMINAL :")
-    print(f"  [✓] Shell détecté          : {os.environ.get('SHELL', 'Inconnu')}")
-    print(f"  [{'✓' if has_starship else ' '}] Starship Prompt        : Invite de commande moderne & rapide")
-    print(f"  [{'✓' if has_zsh else ' '}] Shell Zsh              : Alternative puissante à Bash")
-    print(f"  [{'✓' if has_fastfetch else ' '}] Fastfetch              : Affichage esthétique des infos système")
+    print(f"📦 {t('term_tools_status')} :")
+    print(f"  [✓] {t('term_shell_detected')} : {os.environ.get('SHELL', 'Inconnu')}")
+    print(f"  [{'✓' if has_starship else ' '}] Starship Prompt        : {t('term_starship_desc')}")
+    print(f"  [{'✓' if has_zsh else ' '}] Shell Zsh              : {t('term_zsh_desc')}")
+    print(f"  [{'✓' if has_fastfetch else ' '}] Fastfetch              : {t('term_fastfetch_desc')}")
 
     print("\n------------------------------------------------------------")
-    print("1. ⚡ Injecter les alias Arch utiles (update, cleanup, mirror)")
-    print("2. 🚀 Installer & Configurer Starship Prompt")
-    print("3. 🐚 Installer le Shell Zsh")
-    print("4. 🖼️ Installer Fastfetch")
-    print("0. ↩️ Retour au menu principal")
+    print(t("term_opt1"))
+    print(t("term_opt2"))
+    print(t("term_opt3"))
+    print(t("term_opt4"))
+    print(t("term_opt0"))
     print("------------------------------------------------------------")
 
-    choice = input("👉 Ton choix : ").strip()
+    choice = input(t("choice")).strip()
 
     if choice == "1":
         inject_aliases()
@@ -104,4 +103,4 @@ def show_terminal_module():
     elif choice == "4":
         subprocess.run(["sudo", "pacman", "-S", "--needed", "fastfetch"], check=False)
 
-    input("\nAppuie sur Entrée pour continuer...")
+    input(f"\n{t('press_enter')}")
