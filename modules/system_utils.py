@@ -98,6 +98,17 @@ def configure_firewall():
     print(f"🎉 {t('sys_ufw_success')}")
 
 
+def install_pacman_contrib():
+    """Installe les scripts utilitaires pacman-contrib (paccache, pactree...)."""
+    print(f"\n🧹 {t('sys_pacman_contrib_launch')}")
+    if is_package_installed("pacman-contrib"):
+        print(f"🎉 {t('sys_pacman_contrib_already_installed')}")
+    else:
+        print(f"🚀 {t('sys_installing')} pacman-contrib...")
+        subprocess.run(["sudo", "pacman", "-S", "--needed", "pacman-contrib"], check=False)
+        print(f"🎉 {t('sys_pacman_contrib_success')}")
+
+
 def check_multilib_status():
     """Vérifie rapidement si multilib est activé pour l'affichage de l'état."""
     try:
@@ -117,18 +128,21 @@ def show_system_utils_module():
 
     has_reflector = is_package_installed("reflector")
     has_ufw = is_package_installed("ufw")
+    has_contrib = is_package_installed("pacman-contrib")
     has_multilib = check_multilib_status()
 
     print(f"📦 {t('sys_tools_status')} :")
     print(f"  [{'✓' if has_multilib else ' '}] Dépôt Multilib (32-bit/Steam) : {t('sys_multilib_desc')}")
     print(f"  [{'✓' if has_reflector else ' '}] Reflector : {t('sys_reflector_desc')}")
     print(f"  [{'✓' if has_ufw else ' '}] UFW (Uncomplicated Firewall) : {t('sys_ufw_desc')}")
+    print(f"  [{'✓' if has_contrib else ' '}] Pacman-Contrib (paccache) : {t('sys_contrib_desc')}")
 
     print("\n------------------------------------------------------------")
     print(t("sys_opt1")) # Microcode CPU
     print(t("sys_opt2")) # Reflector
     print(t("sys_opt3")) # UFW
     print(t("sys_opt4")) # Activer Multilib
+    print(t("sys_opt5")) # Pacman Contrib
     print(t("sys_opt0")) # Retour
     print("------------------------------------------------------------")
 
@@ -142,5 +156,7 @@ def show_system_utils_module():
         configure_firewall()
     elif choice == "4":
         enable_multilib()
+    elif choice == "5":
+        install_pacman_contrib()
 
     input(f"\n{t('press_enter')}")

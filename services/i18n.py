@@ -85,6 +85,11 @@ MESSAGES = {
         "sys_multilib_success": "Dépôt [multilib] activé avec succès !",
         "sys_multilib_error": "Échec de l'activation automatique de [multilib].",
         "sys_opt4": "4. ⚙️ Activer le dépôt [multilib] (Steam / 32-bit)",
+        "sys_contrib_desc": "Outils de maintenance Pacman (paccache, pactree)",
+        "sys_pacman_contrib_launch": "Installation des outils Pacman-Contrib...",
+        "sys_pacman_contrib_already_installed": "pacman-contrib est déjà installé !",
+        "sys_pacman_contrib_success": "pacman-contrib installé avec succès !",
+        "sys_opt5": "5. 🧹 Installer Pacman-Contrib (outils de nettoyage paccache)",
 
         # AUR Module
         "aur_title": "📦 ASSISTANTS AUR (ARCH USER REPOSITORY)",
@@ -246,7 +251,7 @@ MESSAGES = {
         "game_desc_heroic": "Lanceur natif pour Epic Games et GOG",
         "game_opt1": "1. 🚀 Tout installer/compléter (Paquets officiels recommandés)",
         "game_opt2": "2. 🎯 Sélectionner les paquets un par un (Officiels)",
-        "game_opt3": "3. 🦸 Installer Heroic Games Launcher depuis l'AUR",
+        "game_opt3": "3. 📦 Installer / Sélectionner les paquets AUR (Heroic, Manettes...)",
         "game_opt0": "0. ↩️ Retour au menu principal",
         "game_no_pkg_selected": "Aucun paquet sélectionné.",
         "game_launching_yay": "Lancement de yay pour l'AUR",
@@ -259,7 +264,11 @@ MESSAGES = {
         "game_heroic_installed": "Heroic Games Launcher est déjà installé sur ta machine !",
         "game_desc_mangohud": "Affichage des FPS & métriques en jeu (HUD)",
         "game_desc_goverlay": "Interface graphique de configuration pour MangoHud",
-        "game_desc_lact": "Centre de contrôle pour GPU AMD (Overclock/Fans)",
+        "game_desc_lact": "Centre de contrôle pour GPU AMD (Overclock/Fans)","game_desc_gamescope": "Micro-compositeur Valve (scaling, FSR et gestion d'affichage)",
+        "game_desc_antimicrox": "Mappage des touches de manette vers clavier/souris",
+        "game_desc_game_devices_udev": "Règles d'accès et support udev universel pour manettes",
+        "game_desc_xpadneo": "Pilote avancé Bluetooth pour manettes Xbox (AUR)",
+        "game_desc_dualsensectl": "Gestion des LED/batterie des manettes PS5 DualSense (AUR)",
 
         # Developer Module
         "dev_title": "👨‍💻 PACK DÉVELOPPEUR & OUTILS DE CODE",
@@ -399,6 +408,11 @@ MESSAGES = {
         "sys_multilib_success": "[multilib] repository successfully enabled!",
         "sys_multilib_error": "Failed to automatically enable [multilib].",
         "sys_opt4": "4. ⚙️ Enable [multilib] repository (Steam / 32-bit)",
+        "sys_contrib_desc": "Pacman maintenance tools (paccache, pactree)",
+        "sys_pacman_contrib_launch": "Installing Pacman-Contrib tools...",
+        "sys_pacman_contrib_already_installed": "pacman-contrib is already installed!",
+        "sys_pacman_contrib_success": "pacman-contrib successfully installed!",
+        "sys_opt5": "5. 🧹 Install Pacman-Contrib (paccache cleaning tools)",
 
         # AUR Module
         "aur_title": "📦 AUR HELPERS (ARCH USER REPOSITORY)",
@@ -560,7 +574,7 @@ MESSAGES = {
         "game_desc_heroic": "Native launcher for Epic Games and GOG",
         "game_opt1": "1. 🚀 Install/complete all (Recommended official packages)",
         "game_opt2": "2. 🎯 Select packages individually (Official)",
-        "game_opt3": "3. 🦸 Install Heroic Games Launcher from AUR",
+        "game_opt3": "3. 📦 Install / Select AUR packages (Heroic, Controllers...)",
         "game_opt0": "0. ↩️ Return to main menu",
         "game_no_pkg_selected": "No package selected.",
         "game_launching_yay": "Launching yay for AUR",
@@ -574,6 +588,11 @@ MESSAGES = {
         "game_desc_mangohud": "In-game FPS & performance metrics overlay (HUD)",
         "game_desc_goverlay": "Graphical configuration tool for MangoHud",
         "game_desc_lact": "Control application for AMD GPUs (Overclock/Fans)",
+        "game_desc_gamescope": "Valve micro-compositor (scaling, FSR and display management)",
+        "game_desc_antimicrox": "Map gamepad buttons to keyboard/mouse profiles",
+        "game_desc_game_devices_udev": "Universal udev rules for controllers support",
+        "game_desc_xpadneo": "Advanced Bluetooth driver for Xbox controllers (AUR)",
+        "game_desc_dualsensectl": "Tool to control PS5 DualSense LEDs & battery (AUR)",
 
         # Developer Module
         "dev_title": "👨‍💻 DEVELOPER PACK & CODE TOOLS",

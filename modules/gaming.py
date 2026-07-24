@@ -15,7 +15,7 @@ def install_packages(packages: list, use_aur: bool = False):
     # Si on installe des paquets officiels (non AUR), on s'assure que multilib est activé
     if not use_aur:
         if not is_multilib_enabled():
-            print("\n⚙️ Verification du dépôt [multilib]...")
+            print("\n⚙️ Vérification et activation du dépôt [multilib]...")
             enable_multilib()
 
     if use_aur:
@@ -52,6 +52,9 @@ def show_gaming_module():
         "lib32-gamemode": t("game_desc_lib32_gamemode"),
         "mangohud": t("game_desc_mangohud"),
         "goverlay": t("game_desc_goverlay"),
+        "gamescope": t("game_desc_gamescope"),          
+        "antimicrox": t("game_desc_antimicrox"),
+        "game-devices-udev": t("game_desc_game_devices_udev"),
         "vulkan-icd-loader": t("game_desc_vulkan_loader"),
         "lib32-vulkan-icd-loader": t("game_desc_lib32_vulkan_loader"),
         "lutris": t("game_desc_lutris"),
@@ -59,6 +62,8 @@ def show_gaming_module():
 
     aur_packages = {
         "heroic-games-launcher-bin": t("game_desc_heroic"),
+        "xpadneo-dkms": t("game_desc_xpadneo"),                # Pilote Bluetooth Xbox
+        "dualsensectl": t("game_desc_dualsensectl"),
     }
 
     if vendor == "NVIDIA":
@@ -99,8 +104,8 @@ def show_gaming_module():
         missing = [pkg for pkg in official_packages if not is_package_installed(pkg)]
         if missing:
             install_packages(missing, use_aur=False)
-            # Activation du service LACT si installé
-            if "lact" in missing or is_package_installed("lact"):
+            # Activation du service LACT seulement si LACT a été effectivement installé
+            if "lact" in missing:
                 print("\n⚙️ Activation du service lactd...")
                 subprocess.run(["sudo", "systemctl", "enable", "--now", "lactd"], check=False)
         else:
@@ -116,14 +121,20 @@ def show_gaming_module():
                 selected.append(pkg)
         if selected:
             install_packages(selected, use_aur=False)
-            if "lact" in selected or is_package_installed("lact"):
+            # Activation du service LACT uniquement si sélectionné par l'utilisateur
+            if "lact" in selected:
                 print("\n⚙️ Activation du service lactd...")
                 subprocess.run(["sudo", "systemctl", "enable", "--now", "lactd"], check=False)
 
     elif choice == "3":
-        if is_package_installed("heroic-games-launcher-bin"):
-            print(f"\n🎉 {t('game_heroic_installed')}")
-        else:
-            install_packages(["heroic-games-launcher-bin"], use_aur=True)
+        selected_aur = []
+        print(f"\n--- {t('game_section_aur')} ---")
+        for pkg, desc in aur_packages.items():
+            status = t("installed") if is_package_installed(pkg) else t("missing")
+            c = input(f" ❓ {t('game_ask_install')} {pkg} ({desc}) [{status}] ? (o/N / y/N) : ").strip().lower()
+            if c in ["o", "y"]:
+                selected_aur.append(pkg)
+        if selected_aur:
+            install_packages(selected_aur, use_aur=True)
 
     input(f"\n{t('press_enter')}")
